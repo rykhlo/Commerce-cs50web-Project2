@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load widget_tweaks %}
 
 {% block body %}
 
@@ -8,28 +9,43 @@
         <div>{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'createlisting' %}" method="post">
+
+      <form action="{% url 'createlisting' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="title" placeholder="Title">
+            {{ form.title|attr:"placeholder:Title"|attr:"name:title"|attr:"type:text"|add_class:"form-control" }}
         </div>
         <div class="form-group">
-            <input class="form-control" type="text" name="description" placeholder="Description">
+            {{ form.description|attr:"placeholder:Description"|attr:"name:description"|attr:"type:text"|add_class:"form-control" }}
         </div>
-        <select class="form-select" aria-label="Default select example" name="category">
-            <option selected>Select Category</option>
-            <option value="Vehicles">Vehicles</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+        <select id="create_select" class="form-select" aria-label="Default select example" name="category">
+            <option selected="selected" disabled>SelectCategory</option>    
+            {% for category in categories %}
+                <option value={{category.title}}>{{category.title}}</option>
+            {% endfor %}
         </select>
         <div class="form-group">
-            <input class="form-control" type="text" name="image_link" placeholder="Link to an Image">
+            {{ form.image_link|attr:"placeholder:Link to Image"|attr:"name:image_link"|attr:"type:text"|add_class:"form-control" }}
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">$</span>
-            <input type="text" class="form-control" name="starting_bid" aria-label="Amount (to the nearest dollar)" placeholder="Starting Bid">
+            <div class="form-group">
+                {{ form.starting_bid|attr:"placeholder:Starting Bid"|attr:"name:starting_bid"|attr:"type:text"|add_class:"form-control" }}
+            </div>
         </div>
         <input class="btn btn-primary" type="submit" value="Create Listing">
     </form>
 
+
+
 {% endblock %}
+
+<script>
+    function SelectValidate(){
+    var ddl = document.getElementById("create_select");
+    var selectedValue = ddl.options[ddl.selectedIndex].value;
+    if (selectedValue == "SelectCategory"){
+        alert("Please select a category");
+    }
+    }
+</script>

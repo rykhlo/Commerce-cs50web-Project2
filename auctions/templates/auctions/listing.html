@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>{{listing.title}}</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <div class="card mb-3">
+
+        <img src="{{listing.image_link}}" class="card-img-top" alt="Listing Image"
+        style="width: 40%;
+        height: 40vw;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        object-fit: cover;">
+
+        <div class="card-body">
+          <p class="card-text"> {{listing.description}}</p>
+          <b></b>
+          <p class="card-text"> Category: <strong>{{listing.category}}</strong></p>
+          <p class="card-text"> Seller: <strong>{{listing.seller}}</strong></p>
+          <p class="card-text"> Seller's email: {{listing.seller.email}}</p>
+          <p class="card-text"><small class="text-muted">Listing Date: {{listing.date_listed}}</small></p>
+        </div>
+    </div>
+
+{% endblock %}

@@ -12,11 +12,11 @@ class Category(models.Model):
         return self.title
 
 class Listing(models.Model):
-    title = models.CharField(max_length=30)
-    description = models.TextField(max_length=254)
+    title = models.CharField(max_length=254)
+    description = models.TextField(max_length=3000)
     date_listed = models.DateTimeField(default=timezone.now)
     isActive = models.BooleanField(default=True)
-    image_link = models.CharField(max_length=254)
+    image_link = models.CharField(max_length=254, blank=True)
     starting_bid = models.FloatField()
     current_bid = models.FloatField(null=True, blank=True)
     seller = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Listings")
