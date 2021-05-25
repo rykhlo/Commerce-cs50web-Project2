@@ -1,6 +1,12 @@
 # cs50web-Project2-Commerce
 Design an eBay-like e-commerce auction site that will allow users to post auction listings, place bids on listings, comment on those listings, and add listings to a “watchlist.”
 
+
+*OpenCourseWare CS50’s Web Programming with Python and JavaScript*
+
+https://cs50.harvard.edu/web/2020/projects/2/commerce/
+
+
 # Specification
 - Models: Your application should have at least three models in addition to the User model: one for auction listings, one for bids, and one for comments made on auction listings. It’s up to you to decide what fields each model should have, and what the types of those fields should be. You may have additional models if you would like.
 
