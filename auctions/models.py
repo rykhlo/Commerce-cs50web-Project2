@@ -20,7 +20,7 @@ class Listing(models.Model):
     starting_bid = models.FloatField()
     current_bid = models.FloatField(null=True, blank=True)
     seller = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Listings")
-    buyer = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)
+    buyer = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
     watchers = models.ManyToManyField(User, blank=True, related_name="Watchlist")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="Listings")
     def __str__(self):

@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import *
 
@@ -30,7 +31,7 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
+@login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
@@ -66,17 +67,28 @@ def register(request):
 def categories(request):
     pass
 
-
+@login_required
 def createlisting(request):
     
     if request.method == "POST":
         item = Listing()
-        item.seller = request.user.username
+        item.seller = request.user
         item.title = request.POST.get('title')
         item.description = request.POST.get('description')
-        
+        CategoryItem = Category()
+        CategoryItem.title = request.POST.get('category')
+        CategoryItem.save()
+        item.category = CategoryItem
+        item.starting_bid = request.POST.get('starting_bid')
+        #try getting image url. If not assign default image pic
+        if request.POST.get('image_link'):
+            item.image_link = request.POST.get('image_link')
+        else:
+            item.image_link = "https://www.allianceplast.com/wp-content/uploads/2017/11/no-image.png"
+        item.save()
+    else:
+        return render(request, "auctions/createlisting.html")
 
-    return render(request, "auctions/createlisting.html")
-
+@login_required
 def watchlist(request):
     pass
