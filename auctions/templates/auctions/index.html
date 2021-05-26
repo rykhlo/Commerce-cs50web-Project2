@@ -3,7 +3,12 @@
 {% block body %}
 
 
-    <h2>Active Listings</h2>
+    {% if not listings %}
+      <h4>There are no listings under current filters</h4>
+      <a href="{% url 'index' %}">Return to the main page</a>
+    {% else %}
+      <h2>Active Listings</h2>
+    {% endif %}
     
     <div class="dropdown" style="text-align: right; padding-right: 6vw; padding-bottom: 6vw;">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">

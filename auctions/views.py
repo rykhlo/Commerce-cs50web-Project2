@@ -17,6 +17,12 @@ def index(request):
         "categories" : Category.objects.all(),
     })
 
+def watchlist(request):
+    return render(request, "auctions/index.html", {
+        "listings" : Listing.objects.filter(watchers=request.user).all(),
+        "categories" : Category.objects.all(),
+    })
+
 def category(request, category_title):
     category = Category.objects.get(title=category_title) 
     return render(request, "auctions/index.html", {
@@ -76,9 +82,6 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def categories(request):
-    pass
-
 @login_required
 def createlisting(request):
     if request.method == "POST":
@@ -110,6 +113,9 @@ def createlisting(request):
 
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
+    isWatched = False
+    if request.user in listing.watchers.all():
+        isWatched = True
 
     if request.method == "POST":
         form = BidForm(request.POST)
@@ -127,6 +133,7 @@ def listing(request,listing_id):
                 "BidCount" : len(listing.Bids.all()),
                 "form" : BidForm(),
                 "message" : f"Congratulations! You placed your bid ${bid.bid_amount}",
+                "isWatched" : isWatched,
             })
         else:
             return render(request, "auctions/listing.html", {
@@ -134,6 +141,7 @@ def listing(request,listing_id):
             "BidCount" : len(listing.Bids.all()),
             "form" : BidForm(request.POST),
             "message" : "Please enter a valid bid amount",
+            "isWatched" : isWatched,
         })
     else:
         return render(request, "auctions/listing.html", {
@@ -141,9 +149,28 @@ def listing(request,listing_id):
             "BidCount" : len(listing.Bids.all()),
             "form" : BidForm(),
             "message" : "",
+            "isWatched" : isWatched,
         })
 
 
 @login_required
-def watchlist(request):
-    pass
+def togglewatchlist(request, listing_id):
+    listing = Listing.objects.get(pk=listing_id)
+    isWatched = True
+    if request.user in listing.watchers.all():
+        listing.watchers.remove(request.user)
+        message = "Removed from the watchlist"
+        isWatched = False
+    else:
+        listing.watchers.add(request.user)
+        message = "Added to the watchlist"
+    
+    return render(request, "auctions/listing.html", {
+            "listing" : listing,
+            "BidCount" : len(listing.Bids.all()),
+            "form" : BidForm(),
+            "message" : message,
+            "isWatched" : isWatched,
+    })
+
+

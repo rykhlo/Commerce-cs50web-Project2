@@ -4,7 +4,6 @@
 {% block body %}
 
     <h2>{{listing.title}}</h2>
-
     {% if message %}
         <div class="alert alert-danger" role="alert">
             {{ message }}
@@ -28,6 +27,14 @@
           <p class="card-text"> Seller: <strong>{{listing.seller}}</strong></p>
           <p class="card-text"> Seller's email: {{listing.seller.email}}</p>
           <p class="card-text"><small class="text-muted">Listing Date: {{listing.date_listed}}</small></p>
+          
+          <a href="{% url 'togglewatchlist' listing.id %}" class="btn btn-outline-secondary">
+              {% if isWatched %}
+                Remove from Watchlist
+              {% else %}
+                Add to Watchlist
+              {% endif %}
+            </a>
         </div>
     </div>
 
@@ -45,6 +52,7 @@
               <p class="lead">Place a bid higher than ${{listing.starting_bid}} to participate in the auction.</p>
             </div>
         </div>
+        
         <div class="form-group mb-3">
             {{ form.bid_amount|attr:"placeholder:Bid amount"|add_class:"form-control" }}
         </div>
