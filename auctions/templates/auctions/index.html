@@ -6,11 +6,9 @@
     {% if not listings %}
       <h4>There are no listings under current filters</h4>
       <a href="{% url 'index' %}">Return to the main page</a>
-    {% else %}
-      <h2>Active Listings</h2>
     {% endif %}
     
-    <div class="dropdown" style="text-align: right; padding-right: 6vw; padding-bottom: 6vw;">
+    <div class="dropdown" style="text-align: right; padding-right: 18vw; padding-bottom: 6vw;">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
         Select Category
       </button>
@@ -24,6 +22,7 @@
     </div>
 
     {% for listing in listings %}
+    {% if listing.isActive  %}
     <div class="card mb-4" style="max-width: 70vw;">
         <div class="row g-10">
           <div class="col-md-4">
@@ -41,10 +40,12 @@
               <h5 class="card-title"><a href="{% url 'listing' listing.id %}">{{listing.title}}</a></h5>
               <p class="card-text">{{listing.description | truncatechars:280}}</p>
               <p class="card-text"><small class="text-muted">{{listing.date_listed}}</small></p>
+              <hr>
+              <h5 class="card-title">${{listing.starting_bid}}</h5>
             </div>
           </div>
         </div>
       </div>
-
+      {% endif %}
       {% endfor %}
 {% endblock %}

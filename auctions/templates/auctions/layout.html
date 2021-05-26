@@ -16,7 +16,7 @@
             <nav class="navbar navbar-expand-sm navbar-light">
                 <a class="navbar-brand" href="{% url 'index' %}">
                     {% load static %} <img src="{% static "auctions/Bank note_Outline.svg" %}" alt="CashBay" width="120" height="96" class="d-inline-block align-top-left">
-                    <span class="hidden">CashBay</span>
+                    <span class="">CashBay</span>
                   </a>
                 <button 
                     class="navbar-toggler" 
@@ -41,6 +41,9 @@
                         </li>
                         <li>
                             <a class="nav-link" href="{% url 'createlisting' %}">Create Listing</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{% url 'userlistings' %}">My Listings</a>
                         </li>
                         <li>
                             <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

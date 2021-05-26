@@ -27,18 +27,21 @@
           <p class="card-text"> Seller: <strong>{{listing.seller}}</strong></p>
           <p class="card-text"> Seller's email: {{listing.seller.email}}</p>
           <p class="card-text"><small class="text-muted">Listing Date: {{listing.date_listed}}</small></p>
-          
-          <a href="{% url 'togglewatchlist' listing.id %}" class="btn btn-outline-secondary">
-              {% if isWatched %}
-                Remove from Watchlist
-              {% else %}
-                Add to Watchlist
-              {% endif %}
+          {% if isSeller and listing.isActive %}
+            <a href="{% url 'closelisting' listing.id %}" class="btn btn-outline-danger">Close Listing for ${{listing.starting_bid}}</a>
+          {% elif listing.isActive %}
+            <a href="{% url 'togglewatchlist' listing.id %}" class="btn btn-outline-secondary">
+                {% if isWatched %}
+                  Remove from Watchlist
+                {% else %}
+                  Add to Watchlist
+                {% endif %}
             </a>
+          {% endif %}
         </div>
     </div>
 
-
+    {% if listing.isActive %}
     <form class="row row-cols-lg-auto g-3 align-items-center" action="{% url 'listing' listing.id %}" method="post" style="padding: 2%;">
         {% csrf_token %}
         <div class="jumbotron jumbotron-fluid">
@@ -49,6 +52,7 @@
               {% else %}
               <h1 class="display-4">Starting Bid: ${{listing.starting_bid}}</h1>
               {% endif %}
+              {% if not isSeller %}
               <p class="lead">Place a bid higher than ${{listing.starting_bid}} to participate in the auction.</p>
             </div>
         </div>
@@ -57,7 +61,9 @@
             {{ form.bid_amount|attr:"placeholder:Bid amount"|add_class:"form-control" }}
         </div>
         <input class="btn btn-success mb-3" type="submit" value="Submit Bid">
+        {% endif %}
     </form>
+    {% endif %}
 
     
 
