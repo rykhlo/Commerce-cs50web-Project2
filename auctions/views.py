@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
+
 
 from .models import *
 from .forms import *
@@ -109,10 +111,37 @@ def createlisting(request):
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
 
-    return render(request, "auctions/listing.html", {
-        "listing" : listing,
-        "message" : "",
-    })
+    if request.method == "POST":
+        form = BidForm(request.POST)
+        #check if form is valid and the bid amount is valid
+        if form.is_valid() and (form.cleaned_data.get('bid_amount') > listing.starting_bid):
+            listing.starting_bid = form.cleaned_data.get('bid_amount')
+            bid = form.save(commit=False)
+            bid.listing = listing
+            bid.bidder = request.user
+            #bid.bid_amount = form.cleaned_data.get('bid_amount')
+            bid.save()
+            listing.save()
+            return render(request, "auctions/listing.html", {
+                "listing" : listing,
+                "BidCount" : len(listing.Bids.all()),
+                "form" : BidForm(),
+                "message" : f"Congratulations! You placed your bid ${bid.bid_amount}",
+            })
+        else:
+            return render(request, "auctions/listing.html", {
+            "listing" : listing,
+            "BidCount" : len(listing.Bids.all()),
+            "form" : BidForm(request.POST),
+            "message" : "Please enter a valid bid amount",
+        })
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing" : listing,
+            "BidCount" : len(listing.Bids.all()),
+            "form" : BidForm(),
+            "message" : "",
+        })
 
 
 @login_required

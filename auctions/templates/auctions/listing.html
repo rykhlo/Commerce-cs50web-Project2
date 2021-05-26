@@ -1,11 +1,14 @@
 {% extends "auctions/layout.html" %}
+{% load widget_tweaks %}
 
 {% block body %}
 
     <h2>{{listing.title}}</h2>
 
     {% if message %}
-        <div>{{ message }}</div>
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
     {% endif %}
 
     <div class="card mb-3">
@@ -27,5 +30,27 @@
           <p class="card-text"><small class="text-muted">Listing Date: {{listing.date_listed}}</small></p>
         </div>
     </div>
+
+
+    <form class="row row-cols-lg-auto g-3 align-items-center" action="{% url 'listing' listing.id %}" method="post" style="padding: 2%;">
+        {% csrf_token %}
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              {% if BidCount > 0 %}
+              <h1 class="display-4">Current Bid: ${{listing.starting_bid}}</h1>
+              <p class="lead">{{BidCount}} bid(s) so far</p>
+              {% else %}
+              <h1 class="display-4">Starting Bid: ${{listing.starting_bid}}</h1>
+              {% endif %}
+              <p class="lead">Place a bid higher than ${{listing.starting_bid}} to participate in the auction.</p>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            {{ form.bid_amount|attr:"placeholder:Bid amount"|add_class:"form-control" }}
+        </div>
+        <input class="btn btn-success mb-3" type="submit" value="Submit Bid">
+    </form>
+
+    
 
 {% endblock %}

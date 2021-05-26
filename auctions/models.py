@@ -17,8 +17,7 @@ class Listing(models.Model):
     date_listed = models.DateTimeField(default=timezone.now)
     isActive = models.BooleanField(default=True)
     image_link = models.CharField(max_length=254, blank=True)
-    starting_bid = models.FloatField()
-    current_bid = models.FloatField(null=True, blank=True)
+    starting_bid = models.FloatField() #essentially used to keep track of the current bid. Dont be fooled by the name!
     seller = models.ForeignKey(User, on_delete=models.PROTECT, related_name="Listings")
     buyer = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True)
     watchers = models.ManyToManyField(User, blank=True, related_name="Watchlist")
@@ -27,9 +26,8 @@ class Listing(models.Model):
         return self.title
 
 class Bid(models.Model):
-#only current bid is stored for the listing. No history of bids
-    listing = models.OneToOneField(Listing, on_delete=models.CASCADE,)
-    bidder = models.OneToOneField(User, on_delete=models.PROTECT,)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="Bids")
+    bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Bids")
     bid_amount = models.FloatField()
     date_bidded = models.DateTimeField(auto_now=True)
     isWinner = models.BooleanField(default=False) 
@@ -43,4 +41,3 @@ class Comment(models.Model):
     date_commented = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return f"{self.author}: {self.date_commented}"
-
