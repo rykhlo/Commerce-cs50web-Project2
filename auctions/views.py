@@ -17,6 +17,7 @@ def index(request):
         "categories" : Category.objects.all(),
     })
 
+@login_required(login_url='/login')
 def watchlist(request):
     return render(request, "auctions/index.html", {
         "listings" : Listing.objects.filter(watchers=request.user).all(),
@@ -49,7 +50,7 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-@login_required
+@login_required(login_url='/login')
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
@@ -82,7 +83,7 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-@login_required
+@login_required(login_url='/login')
 def createlisting(request):
     if request.method == "POST":
         form = ListingForm(request.POST)
@@ -110,7 +111,8 @@ def createlisting(request):
             "categories" : Category.objects.all(),
             "form" : ListingForm(),
         })
-
+        
+@login_required(login_url='/login')
 def listing(request,listing_id):
     listing = Listing.objects.get(pk=listing_id)
     isWatched = False
@@ -153,7 +155,7 @@ def listing(request,listing_id):
         })
 
 
-@login_required
+@login_required(login_url='/login')
 def togglewatchlist(request, listing_id):
     listing = Listing.objects.get(pk=listing_id)
     isWatched = True
