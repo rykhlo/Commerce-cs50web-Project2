@@ -35,9 +35,6 @@
                         <li>
                             <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
                         </li>
-                        <li>
-                            <a class="nav-link" href="{% url 'categories' %}">Categories</a>
-                        </li>
                         {% if user.is_authenticated %}
                         <li>
                             <a class="nav-link" href="{% url 'watchlist' %}">WatchList</a>

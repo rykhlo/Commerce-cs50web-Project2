@@ -1,3 +1,4 @@
+import auctions
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -11,8 +12,15 @@ from .forms import *
 def index(request):
     return render(request, "auctions/index.html", {
         "listings" : Listing.objects.all(),
+        "categories" : Category.objects.all(),
     })
 
+def category(request, category_title):
+    category = Category.objects.get(title=category_title) 
+    return render(request, "auctions/index.html", {
+        "listings" : category.Listings.all(),
+        "categories" : Category.objects.all(),        
+    })
 
 def login_view(request):
     if request.method == "POST":
