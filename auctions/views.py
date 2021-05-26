@@ -135,24 +135,40 @@ def listing(request,listing_id):
     isWatched = False
     if request.user in listing.watchers.all():
         isWatched = True
+    comments = Comment.objects.filter(listing=listing)
+    message = ""
+
+    context = {
+        "listing" : listing,
+        "BidCount" : len(listing.Bids.all()),
+        "form" : BidForm(),
+        "CommentForm" : CommentForm(),
+        "message" : message,
+        "isWatched" : isWatched,
+        "isSeller" : isSeller,
+        "comments" : comments,        
+    }
+
+    if request.method == "POST" and 'comment' in request.POST:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.listing = listing 
+            comment.save()
+            context["message"] = "You have added a comment to this listing"
+            return render(request, "auctions/listing.html", context)
 
     if listing.isActive == False:
-        message = f"The listing is closed, it was sold for ${listing.starting_bid}"
+        context["message"] = f"The listing is closed, it was sold for ${listing.starting_bid}"
         winner = Bid.objects.get(bid_amount=listing.starting_bid).bidder
         if isSeller:
-            message = f"Congratulations! You have sold this item to {winner} for ${listing.starting_bid}"
+            context["message"] = f"Congratulations! You have sold this item to {winner} for ${listing.starting_bid}"
         if request.user == winner:
-            message = f"Congratulations! You have won this auction for ${listing.starting_bid}. Please contact {listing.seller} for further instructions"
-        return render(request, "auctions/listing.html", {
-                "listing" : listing,
-                "BidCount" : len(listing.Bids.all()),
-                "form" : BidForm(),
-                "message" : message,
-                "isWatched" : isWatched,
-                "isSeller" : isSeller,
-            })
+            context["message"] = f"Congratulations! You have won this auction for ${listing.starting_bid}. Please contact {listing.seller} for further instructions"
+        return render(request, "auctions/listing.html", context)
 
-    if request.method == "POST":
+    if request.method == "POST" and 'bid_amount' in request.POST:
         form = BidForm(request.POST)
         #check if form is valid and the bid amount is valid
         if form.is_valid() and (form.cleaned_data.get('bid_amount') > listing.starting_bid):
@@ -163,37 +179,24 @@ def listing(request,listing_id):
             #bid.bid_amount = form.cleaned_data.get('bid_amount')
             bid.save()
             listing.save()
-            return render(request, "auctions/listing.html", {
-                "listing" : listing,
-                "BidCount" : len(listing.Bids.all()),
-                "form" : BidForm(),
-                "message" : f"Congratulations! You placed your bid ${bid.bid_amount}",
-                "isWatched" : isWatched,
-                "isSeller" : isSeller,
-            })
+            context["message"] = f"Congratulations! You placed your bid ${bid.bid_amount}"
+            return render(request, "auctions/listing.html", context)
         else:
-            return render(request, "auctions/listing.html", {
-            "listing" : listing,
-            "BidCount" : len(listing.Bids.all()),
-            "form" : BidForm(request.POST),
-            "message" : "Please enter a valid bid amount",
-            "isWatched" : isWatched,
-            "isSeller" : isSeller,
-        })
+            context["message"] = "Please enter a valid bid amount"
+            return render(request, "auctions/listing.html", context)
+
     else:
-        return render(request, "auctions/listing.html", {
-            "listing" : listing,
-            "BidCount" : len(listing.Bids.all()),
-            "form" : BidForm(),
-            "message" : "",
-            "isWatched" : isWatched,
-            "isSeller" : isSeller,
-        })
+        return render(request, "auctions/listing.html", context)
 
 
 @login_required(login_url='/login')
 def togglewatchlist(request, listing_id):
+
     listing = Listing.objects.get(pk=listing_id)
+    isSeller = (request.user == listing.seller)
+    comments = Comment.objects.filter(listing=listing)
+    message = ""
+
     isWatched = True
     if request.user in listing.watchers.all():
         listing.watchers.remove(request.user)
@@ -203,17 +206,42 @@ def togglewatchlist(request, listing_id):
         listing.watchers.add(request.user)
         message = "Added to the watchlist"
     listing.save()
-    return render(request, "auctions/listing.html", {
-            "listing" : listing,
-            "BidCount" : len(listing.Bids.all()),
-            "form" : BidForm(),
-            "message" : message,
-            "isWatched" : isWatched,
-    })
+
+    context = {
+        "listing" : listing,
+        "BidCount" : len(listing.Bids.all()),
+        "form" : BidForm(),
+        "CommentForm" : CommentForm(),
+        "message" : message,
+        "isWatched" : isWatched,
+        "isSeller" : isSeller,
+        "comments" : comments,        
+    }
+
+    return render(request, "auctions/listing.html", context)
 
 @login_required(login_url='/login')
 def closelisting(request, listing_id):
+
     listing = Listing.objects.get(pk=listing_id)
+    isSeller = (request.user == listing.seller)
+    isWatched = False
+    if request.user in listing.watchers.all():
+        isWatched = True
+    comments = Comment.objects.filter(listing=listing)
+    message = ""
+
+    context = {
+        "listing" : listing,
+        "BidCount" : len(listing.Bids.all()),
+        "form" : BidForm(),
+        "CommentForm" : CommentForm(),
+        "message" : message,
+        "isWatched" : isWatched,
+        "isSeller" : isSeller,
+        "comments" : comments,        
+    }
+
     #redirect immediatly in case the listing is closed already 
     if not listing.isActive:
         return HttpResponseRedirect(reverse("listing", args=(listing_id,)))
@@ -225,14 +253,8 @@ def closelisting(request, listing_id):
         isWatched = True
         
     if not isSeller or not listing.Bids.all():
-        return render(request, "auctions/listing.html", {
-            "listing" : listing,
-            "BidCount" : len(listing.Bids.all()),
-            "form" : BidForm(),
-            "message" : "You cannot close this listing",
-            "isWatched" : isWatched,
-            "isSeller" : isSeller,
-    })
+        context["message"] ="You cannot close this listing"
+        return render(request, "auctions/listing.html", context)
 
     else:
         listing.isActive = False
@@ -242,14 +264,8 @@ def closelisting(request, listing_id):
         winner_bid.save()
         listing.save()
         winner = Bid.objects.get(bid_amount=listing.starting_bid).bidder
-        return render(request, "auctions/listing.html", {
-            "listing" : listing,
-            "BidCount" : len(listing.Bids.all()),
-            "form" : BidForm(),
-            "message" : f"You have closed the listing. It was sold for {listing.starting_bid} to {winner}",
-            "isWatched" : isWatched,
-            "isSeller" : isSeller,
-    })
+        context["message"] = f"You have closed the listing. It was sold for {listing.starting_bid} to {winner}"
+        return render(request, "auctions/listing.html", context)
 
 
         

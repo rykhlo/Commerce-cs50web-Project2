@@ -35,7 +35,7 @@ class Bid(models.Model):
         return f"{self.bidder}: ${self.bid_amount}"
 
 class Comment(models.Model):
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comments")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="Comments")
     comment = models.TextField(max_length=254)
     date_commented = models.DateTimeField(default=timezone.now)

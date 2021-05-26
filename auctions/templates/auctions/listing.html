@@ -65,6 +65,29 @@
     </form>
     {% endif %}
 
+    <hr>
+    <h4>Comments:</h4>
+
+    {% for comment in comments%}
+      <div class="card border-secondary mb-4" style="max-width: 36rem; ">
+        <div class="card-header"><strong>{{comment.author}}</strong>           <small>{{comment.date_commented}}</small></div>
+        <div class="card-body text-secondary">
+          <p class="card-text">{{comment.comment}}</p>
+        </div>
+      </div>
+    {% endfor %}
+
+    <form class="cols-lg-auto g-3 align-items-center" action="{% url 'listing' listing.id %}" method="post" style="padding: 2%; width: 60%;">
+      {% csrf_token %}
+      <div class="form-group mb-3">
+        {{ CommentForm.comment|attr:"placeholder:Add Comment"|add_class:"form-control"| attr:"rows:5"}}
+      </div>
+      <div class="form-group mb-3">
+        <input class="btn btn-outline-secondary mb-4" type="submit" value="Submit Comment" style="display: block;">
+      </div>
+      
+  </form>
+
     
 
 {% endblock %}
