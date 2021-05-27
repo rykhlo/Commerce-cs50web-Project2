@@ -28,3 +28,9 @@ https://cs50.harvard.edu/web/2020/projects/2/commerce/
 - Categories: Users should be able to visit a page that displays a list of all listing categories. Clicking on the name of any category should take the user to a page that displays all of the active listings in that category.
 
 - Django Admin Interface: Via the Django admin interface, a site administrator should be able to view, add, edit, and delete any listings, comments, and bids made on the site.
+
+# Screenshots 
+![image](https://user-images.githubusercontent.com/70405634/119747142-b307d800-be57-11eb-9bb0-05f6a0d6ce1f.png)
+![image](https://user-images.githubusercontent.com/70405634/119746285-be5a0400-be55-11eb-9873-c40187a8e46f.png)
+![image](https://user-images.githubusercontent.com/70405634/119746201-83f06700-be55-11eb-85a5-50e6ba447c3b.png)
+![image](https://user-images.githubusercontent.com/70405634/119747116-a6837f80-be57-11eb-909b-7011ef4eb8aa.png)
