@@ -13,6 +13,7 @@ from .forms import *
 
 def index(request):
     return render(request, "auctions/index.html", {
+        "title" : "All Active Listings",
         "listings" : Listing.objects.all(),
         "categories" : Category.objects.all(),
     })
@@ -20,6 +21,7 @@ def index(request):
 @login_required(login_url='/login')
 def watchlist(request):
     return render(request, "auctions/index.html", {
+        "title" : "My Watchlist",
         "listings" : Listing.objects.filter(watchers=request.user).all(),
         "categories" : Category.objects.all(),
     })
@@ -28,6 +30,7 @@ def watchlist(request):
 def userlistings(request):
     listings = Listing.objects.filter(seller=request.user).all()
     return render(request, "auctions/userlistings.html", {
+        "title" : "My listings",
         "listings" : listings,
         "filters" : ["sold", "active"],
     })
@@ -36,6 +39,7 @@ def userlistings(request):
 def userlistings_filter(request, filter):
     bool_helper = filter == "Active"
     return render(request, "auctions/userlistings.html", {
+        "title" : filter,
         "listings" : Listing.objects.filter(seller=request.user, isActive=bool_helper).all(),
         "filters" : ["sold", "active"],
     })
@@ -43,6 +47,7 @@ def userlistings_filter(request, filter):
 def category(request, category_title):
     category = Category.objects.get(title=category_title) 
     return render(request, "auctions/index.html", {
+        "title" : category_title,
         "listings" : category.Listings.all(),
         "categories" : Category.objects.all(),        
     })
